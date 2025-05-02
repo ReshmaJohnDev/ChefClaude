@@ -5,24 +5,23 @@ import { getRecipeFromMistral } from "./ai";
 
 export default function Main() {
   console.log("test");
-  const [ingredients, setIngredients] = React.useState([
-    "chciken",
-    "cream",
-    "all spices",
-    "brocooli",
-  ]);
+  const [ingredients, setIngredients] = React.useState([]);
   const [recipe, setRecipe] = React.useState("");
+  const [removeIng, setIng] = React.useState(false);
 
   async function getRecipe() {
     const recipeMarkdown = await getRecipeFromMistral(ingredients);
     setRecipe(recipeMarkdown);
+    setIng((oldRemoveIng) => !oldRemoveIng);
   }
 
   function addIngredient(formData) {
     const newIngredient = formData.get("ingredient");
     setIngredients((prevIngredients) => [...prevIngredients, newIngredient]);
   }
-
+  function clearIg() {
+    setIngredients((prev) => []);
+  }
   return (
     <main>
       <form action={addIngredient} className="add-ingredient-form">
@@ -40,6 +39,7 @@ export default function Main() {
       )}
 
       {recipe && <ClaudeRecipe recipe={recipe} />}
+      {removeIng && <button onClick={clearIg}>Clear Ingredient</button>}
     </main>
   );
 }
